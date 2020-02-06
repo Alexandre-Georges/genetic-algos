@@ -1,0 +1,37 @@
+<html>
+  <head>
+  </head>
+  <body>
+    <span id="web-worker-no-support" style="display: none">Web workers are not supported</span>
+    <span id="web-worker-error" style="display: none">There was an issue with the web worker</span>
+
+    <button id="start-button">Start</button>
+    <span id="current-generation"></span>
+    <span id="current-state"></span>
+    <span id="success"></span>
+    <script>
+      window.addEventListener('load', () => {
+        if (window.Worker) {
+          const ww = new Worker('ww.js');
+
+          ww.onmessage = (message) => {
+            if (message.data.type === 'new-state') {
+              document.getElementById('current-generation').innerHTML = message.data.generation;
+              document.getElementById('current-state').innerHTML = message.data.state;
+            } else if (message.data.type === 'new-state') {
+              document.getElementById('success').innerHTML = 'success';
+            }
+          }
+
+          ww.postMessage({ type: 'start' });
+          document.getElementById('start-button').addEventListener('click', () => {
+            ww.postMessage({ type: 'start' });
+          });
+        } else {
+          document.getElementById('web-worker-no-support').style.display = 'block';
+        }
+      });
+    </script>
+    <script src="svelte.js"></script>
+  </body>
+</html>
