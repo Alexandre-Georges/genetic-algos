@@ -1,6 +1,6 @@
 const utils = require('./utils.js');
 
-const RIGHT_ANSWER = 'je ne suis pas un dildo';
+const RIGHT_ANSWER = 'sentence to find';
 const POPULATION_SIZE = 10000;
 const MUTATION_RATE = 0.5;
 const GENE_MUTATION_CHANCE = 6;

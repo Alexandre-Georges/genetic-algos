@@ -1,4 +1,5 @@
 const utils = require('./utils.js');
+const sentenceModel = require('./sentence-model.js');
 
 const createPopulation = (number, initStateFunction) => {
   const population = [];
@@ -45,9 +46,9 @@ const nextGeneration = (timeout, population, generation, model, stateCallback, s
   let stop = false;
   setTimeout(() => {
     population = evaluatePopulation(population, model.evaluate);
-    stateCallback(generation, population[0].state);
+    stateCallback({ generation, best: population[0].state });
     if (population[0].found === true) {
-      solutionCallback(generation, population[0].state)
+      solutionCallback({ generation, best: population[0].state });
       stop = true;
     }
     population = model.chuck(population);
@@ -60,16 +61,30 @@ const nextGeneration = (timeout, population, generation, model, stateCallback, s
   }, timeout);
 };
 
-const start = (timeout, model, stateCallback, solutionCallback) => {
-  let population = createPopulation(model.populationSize, model.initState);
-  let generation = 1;
-  nextGeneration(timeout, population, generation, model, stateCallback, solutionCallback)
+const setup = (timeoutP, algoP, setupP, stateCallbackP, endCallbackP) => {
+  timeout = timeoutP;
+  if (algoP === 'sentence') {
+    model = sentenceModel;
+  }
+  stateCallback = stateCallbackP;
+  endCallback = endCallbackP;
 };
+
+const start = () => {
+  let population = createPopulation(model.populationSize, model.initState);
+  nextGeneration(timeout, population, 1, model, stateCallback, endCallback)
+};
+
+let timeout = null;
+let model = null;
+let stateCallback = null;
+let endCallback = null;
 
 module.exports = {
   createPopulation,
   evaluatePopulation,
   breedPopulation,
   mutatePopulation,
+  setup,
   start,
 };
