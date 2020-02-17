@@ -3,23 +3,33 @@
 
   let ww = null;
   let wwSupported = true;
+  
   let data = null;
 
-  function handleSetup(setupEvent) {
-    ww.postMessage({ type: 'setup', algo: setupEvent.detail.algo, setup: setupEvent.detail.setup });
+  let algo = 'sentence';
+  let config = {};
+
+  function handleConfig(configEvent) {
+    config = configEvent.detail;
   }
 
-  function handleStart() {
-    ww.postMessage({ type: 'start' });
+  function handleStart(startEvent) {
+    ww.postMessage({ type: 'start', algo, config });
   }
 
   window.addEventListener('load', () => {
     if (window.Worker) {
       ww = new Worker('ww.js');
 
-      ww.onmessage = (message) => {
-        data = message.data;
+      ww.onmessage = message => {
+        if (message.data.type === 'config') {
+          config = message.data.config;
+        } else {
+          data = message.data;
+        }
       }
+
+      ww.postMessage({ type: 'get-config', algo });
     } else {
       wwSupported = false;
     }
@@ -34,5 +44,5 @@
     <option>Letter finder</option>
   </select>
   <button type="button" on:click={handleStart}>Start</button>
-  <LetterFinder on:setup={handleSetup} data={data}></LetterFinder>
+  <LetterFinder on:config={handleConfig} config={config} data={data}></LetterFinder>
 </div>

@@ -1,36 +1,37 @@
 const utils = require('./utils.js');
 
-const RIGHT_ANSWER = 'sentence to find';
-const POPULATION_SIZE = 10000;
-const MUTATION_RATE = 0.5;
-const GENE_MUTATION_CHANCE = 6;
+const DEFAULT_CONFIG = {
+  allowedLetters: 'qwertyuiopasdfghjklzxcvbnm ',
+  answer: 'sentence to find',
+  populationSize: 10000,
+  mutationRate: 0.5,
+  geneMutationRate: 0.16,
+};
 
-const ALLOWED_LETTERS = 'qwertyuiopasdfghjklzxcvbnm ';
-
-const initState = () => {
+const initState = config => {
   let state = '';
-  for (let i = 0; i < RIGHT_ANSWER.length; i++) {
-    state += ALLOWED_LETTERS[utils.getRandomNumberBetween(0, ALLOWED_LETTERS.length)];
+  for (let i = 0; i < config.answer.length; i++) {
+    state += config.allowedLetters[utils.getRandomNumberBetween(0, config.allowedLetters.length)];
   }
   return state;
 };
 
-const evaluate = individual => {
+const evaluate = (config, individual) => {
   let score = 0;
   for (let i = 0; i < individual.state.length; i++) {
     const c = individual.state[i];
-    if (RIGHT_ANSWER.match(c)) {
-      if (RIGHT_ANSWER.charAt(i) === c) {
+    if (config.answer.match(c)) {
+      if (config.answer.charAt(i) === c) {
         score += 10;
       } else {
         score += 1;
       }
     }
   }
-  return { score, found: score === RIGHT_ANSWER.length * 10 };
+  return { score, found: score === config.answer.length * 10 };
 };
 
-const breed = (parent1, parent2) => {
+const breed = (config, parent1, parent2) => {
   const parents = [parent1, parent2];
   const geneIndexes = [];
   while (geneIndexes.length < parent1.state.length) {
@@ -44,26 +45,23 @@ const breed = (parent1, parent2) => {
   return [ child ];
 };
 
-const mutate = individual => {
+const mutate = (config, individual) => {
   const mutatedIndividual = { state: individual.state };
 
-  const shouldMutates = [];
-  while (shouldMutates.length < individual.state.length) {
-    shouldMutates.push(utils.getRandomNumberBetween(0, GENE_MUTATION_CHANCE));
-  }
-  for (const i in shouldMutates) {
-    const index = parseInt(i);
-    if (shouldMutates[index] === 0) {
+  let i = 0;
+  while (i < individual.state.length) {
+    if (Math.random() < config.geneMutationRate) {
       mutatedIndividual.state =
-        mutatedIndividual.state.substr(0, index) +
-        ALLOWED_LETTERS[utils.getRandomNumberBetween(0, ALLOWED_LETTERS.length)] +
-        mutatedIndividual.state.substr(index + 1, mutatedIndividual.state.length - index);
+        mutatedIndividual.state.substr(0, i) +
+        config.allowedLetters[utils.getRandomNumberBetween(0, config.allowedLetters.length)] +
+        mutatedIndividual.state.substr(i + 1, mutatedIndividual.state.length - i);
     }
+    i++;
   }
   return mutatedIndividual;
 };
 
-const chuck = population => {
+const chuck = (config, population) => {
   const bestScore = population[0].score;
   const minPopulation = 6;
   let acceptedPopulationIndex = 0;
@@ -74,11 +72,10 @@ const chuck = population => {
 };
 
 module.exports = {
+  getConfig: () => DEFAULT_CONFIG,
   initState,
   evaluate,
   breed,
   mutate,
   chuck,
-  populationSize: POPULATION_SIZE,
-  mutationRate: MUTATION_RATE,
 };
