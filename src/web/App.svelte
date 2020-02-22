@@ -3,7 +3,7 @@
 
   let ww = null;
   let wwSupported = true;
-  
+
   let data = null;
 
   let algo = 'sentence';
@@ -36,13 +36,16 @@
   });
 </script>
 
-<div class="main">
+<div class="pure-g">
   {#if !wwSupported}
-    <span>Web workers are not supported</span>
+    <span class="pure-u-1">Web workers are not supported</span>
+  {:else}
+    <div class="pure-u-1">
+      <select>
+        <option>Letter finder</option>
+      </select>
+      <button type="button" on:click={handleStart}>Start</button>
+    </div>
+    <LetterFinder on:config={handleConfig} config={config} data={data}></LetterFinder>
   {/if}
-  <select>
-    <option>Letter finder</option>
-  </select>
-  <button type="button" on:click={handleStart}>Start</button>
-  <LetterFinder on:config={handleConfig} config={config} data={data}></LetterFinder>
 </div>
