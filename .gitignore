@@ -1,3 +1,4 @@
 node_modules
 dist/svelte.js
 dist/ww-exports.js
+dist/main.css

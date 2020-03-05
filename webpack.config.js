@@ -1,15 +1,14 @@
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = [
   {
     entry: './src/ww-exports.js',
     output: { filename: 'ww-exports.js', path: __dirname + '/dist' },
-    watch: true,
   },
   {
     entry: './src/web/index.js',
     output: { filename: 'svelte.js', path: __dirname + '/dist' },
-    watch: true,
     resolve: {
       alias: {
         svelte: path.resolve('node_modules', 'svelte')
@@ -29,7 +28,14 @@ module.exports = [
             }
           }
         },
+        {
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        },
       ]
     },
+    plugins: [
+      new MiniCssExtractPlugin(),
+    ],
   }
 ];
