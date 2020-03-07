@@ -29,7 +29,7 @@
         } else {
           data = message.data;
         }
-      }
+      };
 
       ww.postMessage({ type: 'get-config', algo });
     } else {
@@ -38,29 +38,13 @@
   });
 </script>
 
-<div class="container pure-g">
-  {#if !wwSupported}
-    <span class="pure-u-1">Web workers are not supported</span>
-  {:else}
-    <form class="pure-u-1 pure-form">
-      <select class="pure-input-1-2">
-        <option>Letter finder</option>
-      </select>
-      <input bind:value={timeout} type="number" placeholder="Timeout between generations">
-      <button type="button" class="start-button pure-button pure-button-primary" on:click={handleStart}>Start</button>
-    </form>
-    <hr class="separator pure-u-1">
-    <LetterFinder on:config={handleConfig} config={config} data={data}></LetterFinder>
-  {/if}
-</div>
-
 <style>
   hr {
     height: 1px;
     border: 0;
     background-color: black;
   }
-	.container {
+  .container {
     margin: 2rem auto 0;
     width: 95%;
     max-width: 60rem;
@@ -78,3 +62,19 @@
     margin-bottom: 2rem;
   }
 </style>
+
+<div class="container pure-g">
+  {#if !wwSupported}
+    <span class="pure-u-1">Web workers are not supported</span>
+  {:else}
+    <form class="pure-u-1 pure-form">
+      <select class="pure-input-1-2">
+        <option>Letter finder</option>
+      </select>
+      <input bind:value={timeout} type="number" placeholder="Timeout between generations" />
+      <button type="button" class="start-button pure-button pure-button-primary" on:click={handleStart}>Start</button>
+    </form>
+    <hr class="separator pure-u-1" />
+    <LetterFinder on:config={handleConfig} {config} {data} />
+  {/if}
+</div>

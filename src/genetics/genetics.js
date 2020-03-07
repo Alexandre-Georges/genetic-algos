@@ -13,7 +13,12 @@ const evaluatePopulation = (config, population, evaluateFunction) => {
   const orderedPopulation = [];
   for (let individual of population) {
     const result = evaluateFunction(config, individual);
-    orderedPopulation.push(Object.assign({}, individual, { score: result.score, found: result.found }));
+    orderedPopulation.push(
+      Object.assign({}, individual, {
+        score: result.score,
+        found: result.found,
+      }),
+    );
   }
   return orderedPopulation.sort((i1, i2) => i2.score - i1.score);
 };
@@ -66,7 +71,7 @@ const start = (timeout, algo, config, stateCallback, endCallback) => {
   const modelConfig = Object.assign({}, model.getConfig(), config);
 
   let population = createPopulation(modelConfig, model.initState);
-  nextGeneration(modelConfig, timeout, population, 1, model, stateCallback, endCallback)
+  nextGeneration(modelConfig, timeout, population, 1, model, stateCallback, endCallback);
 };
 
 const getConfig = algo => getModel(algo).getConfig();

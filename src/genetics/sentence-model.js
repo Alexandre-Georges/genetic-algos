@@ -42,7 +42,7 @@ const breed = (config, parent1, parent2) => {
     const geneIndex = geneIndexes[i];
     child.state += parents[geneIndex].state.charAt(i);
   }
-  return [ child ];
+  return [child];
 };
 
 const mutate = (config, individual) => {
