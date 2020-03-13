@@ -1,17 +1,17 @@
 const utils = require('./utils.js');
 
 const DEFAULT_CONFIG = {
-  allowedLetters: 'qwertyuiopasdfghjklzxcvbnm ',
-  answer: 'sentence to find',
-  populationSize: 10000,
-  mutationRate: 0.5,
-  geneMutationRate: 0.16,
+  colours: ['red', 'blue', 'yellow', 'green', 'white', 'black'],
+  answer: ['blue', 'yellow', 'black', 'red'],
+  populationSize: 10,
+  mutationRate: 0.3,
+  geneMutationRate: 0.2,
 };
 
 const initState = config => {
-  let state = '';
+  let state = [];
   for (let i = 0; i < config.answer.length; i++) {
-    state += config.allowedLetters[utils.getRandomNumberBetween(0, config.allowedLetters.length)];
+    state.push(config.colours[utils.getRandomNumberBetween(0, config.colours.length)]);
   }
   return state;
 };
@@ -19,13 +19,8 @@ const initState = config => {
 const evaluate = (config, individual) => {
   let score = 0;
   for (let i = 0; i < individual.state.length; i++) {
-    const c = individual.state[i];
-    if (config.answer.match(c)) {
-      if (config.answer.charAt(i) === c) {
-        score += 10;
-      } else {
-        score += 1;
-      }
+    if (config.answer[i] === individual.state[i]) {
+      score += 10;
     }
   }
   return { score, found: score === config.answer.length * 10 };
@@ -37,10 +32,10 @@ const breed = (config, parent1, parent2) => {
   while (geneIndexes.length < parent1.state.length) {
     geneIndexes.push(utils.getRandomNumberBetween(0, 2));
   }
-  const child = { state: '' };
+  const child = { state: [] };
   for (const i in geneIndexes) {
     const geneIndex = geneIndexes[i];
-    child.state += parents[geneIndex].state.charAt(i);
+    child.state.push(parents[geneIndex].state[i]);
   }
   return [child];
 };
@@ -51,10 +46,7 @@ const mutate = (config, individual) => {
   let i = 0;
   while (i < individual.state.length) {
     if (Math.random() < config.geneMutationRate) {
-      mutatedIndividual.state =
-        mutatedIndividual.state.substr(0, i) +
-        config.allowedLetters[utils.getRandomNumberBetween(0, config.allowedLetters.length)] +
-        mutatedIndividual.state.substr(i + 1, mutatedIndividual.state.length - i);
+      mutatedIndividual.state[i] = config.colours[utils.getRandomNumberBetween(0, config.colours.length)];
     }
     i++;
   }

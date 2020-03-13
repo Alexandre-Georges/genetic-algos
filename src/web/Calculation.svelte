@@ -27,12 +27,20 @@
   $: {
     if (hasReceivedConfig === false && defaultConfig !== null) {
       localConfig = Object.assign({}, defaultConfig);
+      localConfig.numbers = JSON.stringify(defaultConfig.numbers).replace(/"/g, '');
       hasReceivedConfig = true;
     }
   }
 
   function updateConfig() {
-    dispatch('config', localConfig);
+    let numbers = null;
+    try {
+      numbers = JSON.parse(localConfig.numbers);
+    } catch {
+      // ignoring the JSON.parse errors
+      return;
+    }
+    dispatch('config', Object.assign({}, localConfig, { numbers }));
   }
 </script>
 
@@ -54,14 +62,23 @@
         <fieldset>
           <legend>Model Parameters</legend>
 
-          <label for="sentence">Sentence to find</label>
+          <label for="result">Result to find</label>
           <input
             bind:value={localConfig.answer}
             on:change={updateConfig}
-            id="sentence"
+            id="result"
+            class="pure-input-1"
+            type="number"
+            placeholder="Result" />
+
+          <label for="numbers">Numbers</label>
+          <input
+            bind:value={localConfig.numbers}
+            on:change={updateConfig}
+            id="numbers"
             class="pure-input-1"
             type="text"
-            placeholder="Sentence" />
+            placeholder="Numbers" />
 
           <label for="population-size">Population Size</label>
           <input
@@ -99,23 +116,21 @@
           <tr>
             <th>Generation</th>
             <th>Best Individual</th>
+            <th>Result</th>
           </tr>
         </thead>
-        {#if localConfig.answer}
-          <tr>
-            <td>Objective</td>
-            <td>{localConfig.answer}</td>
-          </tr>
-        {/if}
         {#if histories.length === 0}
           <tr>
-            <td colspan="2">No history yet</td>
+            <td colspan="3">No history yet</td>
           </tr>
         {/if}
         {#each histories as history, index}
           <tr class={history.generation === finalGeneration ? 'final' : ''}>
             <td>{history.generation}</td>
-            <td>{history.best.state}</td>
+            <td>
+              {#each history.best.state as stateUnit}{stateUnit}{/each}
+            </td>
+            <td>{history.best.extras.result}</td>
           </tr>
         {/each}
       </table>

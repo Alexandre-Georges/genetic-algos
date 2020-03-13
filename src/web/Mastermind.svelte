@@ -8,6 +8,7 @@
   let localConfig = {};
   let histories = [];
   let finalGeneration = null;
+  let objective = null;
 
   const dispatch = createEventDispatcher();
 
@@ -27,12 +28,29 @@
   $: {
     if (hasReceivedConfig === false && defaultConfig !== null) {
       localConfig = Object.assign({}, defaultConfig);
+      localConfig.answer = JSON.stringify(defaultConfig.answer)
+        .replace(/^"/, '')
+        .replace(/"$/, '');
+      localConfig.colours = JSON.stringify(defaultConfig.colours)
+        .replace(/^"/, '')
+        .replace(/"$/, '');
+      objective = defaultConfig.answer;
       hasReceivedConfig = true;
     }
   }
 
   function updateConfig() {
-    dispatch('config', localConfig);
+    let colours = null;
+    let answer = null;
+    try {
+      answer = JSON.parse(localConfig.answer);
+      colours = JSON.parse(localConfig.colours);
+    } catch {
+      // ignoring the JSON.parse errors
+      return;
+    }
+    objective = answer;
+    dispatch('config', Object.assign({}, localConfig, { answer, colours }));
   }
 </script>
 
@@ -45,6 +63,16 @@
     background-color: brown;
     color: white;
   }
+
+  .token {
+    height: 0.75rem;
+    width: 0.75rem;
+    display: block;
+    border: solid 1px black;
+    border-radius: 0.5rem;
+    display: inline-block;
+    margin-right: 0.5rem;
+  }
 </style>
 
 <div class="pure-u-1">
@@ -54,14 +82,23 @@
         <fieldset>
           <legend>Model Parameters</legend>
 
-          <label for="sentence">Sentence to find</label>
+          <label for="result">Combination to find</label>
           <input
             bind:value={localConfig.answer}
             on:change={updateConfig}
-            id="sentence"
+            id="result"
             class="pure-input-1"
             type="text"
-            placeholder="Sentence" />
+            placeholder="Result" />
+
+          <label for="colours">Colours</label>
+          <input
+            bind:value={localConfig.colours}
+            on:change={updateConfig}
+            id="colours"
+            class="pure-input-1"
+            type="text"
+            placeholder="Colours" />
 
           <label for="population-size">Population Size</label>
           <input
@@ -101,10 +138,14 @@
             <th>Best Individual</th>
           </tr>
         </thead>
-        {#if localConfig.answer}
+        {#if objective}
           <tr>
             <td>Objective</td>
-            <td>{localConfig.answer}</td>
+            <td>
+              {#each objective as tokenColour}
+                <span style="background-color: {tokenColour}" class="token" />
+              {/each}
+            </td>
           </tr>
         {/if}
         {#if histories.length === 0}
@@ -115,7 +156,11 @@
         {#each histories as history, index}
           <tr class={history.generation === finalGeneration ? 'final' : ''}>
             <td>{history.generation}</td>
-            <td>{history.best.state}</td>
+            <td>
+              {#each history.best.state as tokenColour}
+                <span style="background-color: {tokenColour}" class="token" />
+              {/each}
+            </td>
           </tr>
         {/each}
       </table>
