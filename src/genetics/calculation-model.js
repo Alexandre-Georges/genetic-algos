@@ -9,7 +9,7 @@ const DEFAULT_CONFIG = {
   geneMutationRate: 0.1,
 };
 
-const initState = config => {
+const initState = (config) => {
   let state = [];
   const currentNumbers = Object.assign([], config.numbers);
   while (currentNumbers.length > 1) {
@@ -87,12 +87,12 @@ module.exports = {
   breed,
   mutate,
   chuck,
-  stateCallback: state => {
+  stateCallback: (state) => {
     console.log(
       `Generation ${state.generation}'s best individual : ${state.best.state.join(' ')} = ${state.best.extras.result}`,
     );
   },
-  endCallback: state => {
+  endCallback: (state) => {
     console.log(
       `Solution found after ${state.generation} generation(s) : ${state.best.state.join(' ')} = ${
         state.best.extras.result

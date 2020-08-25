@@ -38,7 +38,7 @@
     if (window.Worker) {
       ww = new Worker('ww.js');
 
-      ww.onmessage = message => {
+      ww.onmessage = (message) => {
         if (message.data.type === 'config') {
           defaultConfig = message.data.config;
         } else {
@@ -83,7 +83,7 @@
     <span class="pure-u-1">Web workers are not supported</span>
   {:else}
     <form class="pure-u-1 pure-form">
-      <select on:change={event => setAlgo(event.target.value)} class="pure-input-1-2">
+      <select on:change={(event) => setAlgo(event.target.value)} class="pure-input-1-2">
         <option value="sentence">Letter finder</option>
         <option value="calculation">Calculation</option>
         <option value="mastermind">Mastermind</option>

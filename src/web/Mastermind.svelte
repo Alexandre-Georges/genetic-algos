@@ -28,12 +28,8 @@
   $: {
     if (hasReceivedConfig === false && defaultConfig !== null) {
       localConfig = Object.assign({}, defaultConfig);
-      localConfig.answer = JSON.stringify(defaultConfig.answer)
-        .replace(/^"/, '')
-        .replace(/"$/, '');
-      localConfig.colours = JSON.stringify(defaultConfig.colours)
-        .replace(/^"/, '')
-        .replace(/"$/, '');
+      localConfig.answer = JSON.stringify(defaultConfig.answer).replace(/^"/, '').replace(/"$/, '');
+      localConfig.colours = JSON.stringify(defaultConfig.colours).replace(/^"/, '').replace(/"$/, '');
       objective = defaultConfig.answer;
       hasReceivedConfig = true;
     }

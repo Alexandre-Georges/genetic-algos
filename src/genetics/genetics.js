@@ -85,9 +85,9 @@ const start = (timeout, algo, config, stateCallback, endCallback) => {
   );
 };
 
-const getConfig = algo => getModel(algo).getConfig();
+const getConfig = (algo) => getModel(algo).getConfig();
 
-const getModel = algo => {
+const getModel = (algo) => {
   if (algo === 'sentence') {
     return sentenceModel;
   } else if (algo === 'calculation') {

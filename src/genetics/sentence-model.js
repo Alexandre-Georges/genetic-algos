@@ -8,7 +8,7 @@ const DEFAULT_CONFIG = {
   geneMutationRate: 0.16,
 };
 
-const initState = config => {
+const initState = (config) => {
   let state = '';
   for (let i = 0; i < config.answer.length; i++) {
     state += config.allowedLetters[utils.getRandomNumberBetween(0, config.allowedLetters.length)];
@@ -78,10 +78,10 @@ module.exports = {
   breed,
   mutate,
   chuck,
-  stateCallback: state => {
+  stateCallback: (state) => {
     console.log(`Generation ${state.generation}'s best individual : ${state.best.state}`);
   },
-  endCallback: state => {
+  endCallback: (state) => {
     console.log(`Solution found after ${state.generation} generation(s) : ${state.best.state}`);
   },
 };
