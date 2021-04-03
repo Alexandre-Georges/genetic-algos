@@ -78,6 +78,7 @@
   }
 </style>
 
+<!-- svelte-ignore a11y-no-onchange -->
 <div class="container pure-g">
   {#if !wwSupported}
     <span class="pure-u-1">Web workers are not supported</span>
